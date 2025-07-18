@@ -1,0 +1,92 @@
+# ===============================================================
+# Deep Research Bot - 配置文件
+# ===============================================================
+#
+# 使用说明:
+# 1. 修改下面的配置项以控制研究任务的行为。
+# 2. 此文件使用 YAML 格式，请注意缩进。
+# 3. 在 Docker 环境中，可以将此文件作为 volume 挂载，
+#    方便在不重新构建镜像的情况下更新任务。
+#
+
+# --- 研究任务配置 ---
+
+# researchQuestion:
+#   描述: 需要研究的核心问题。这是整个任务的起点。
+#   示例: "What are the latest advancements in AI-powered code generation?"
+researchQuestion: "kilo code 最新的羊毛福利"
+
+
+# --- 语言配置 ---
+
+# researchLanguage:
+#   描述: AI 进行背景研究和网络搜索时使用的主要语言。
+#   作用: 这决定了 AI 生成搜索查询的语言，以及理解和处理原始资料的语言。
+#   推荐: 使用 "English" 以获取更广泛和前沿的学术及技术资料。
+#   默认值: "English"
+researchLanguage: "English"
+
+# writingLanguage:
+#   描述: AI 生成最终报告时使用的语言。
+#   作用: 最终产出的研究报告将使用此语言撰写。
+#   推荐: 根据您的需求设置为 "Chinese" (中文) 或 "English" (英文)。
+#   默认值: "Chinese"
+writingLanguage: "Chinese"
+
+
+# --- 模型配置 ---
+
+# modelName:
+#   描述: 指定用于执行研究和撰写任务的 AI 模型。
+#   注意: 请确保您使用的 API 密钥有权限访问此模型。
+#   示例: "gpt-4o", "gpt-4-turbo", "gpt-3.5-turbo"
+#   默认值: "gpt-4o"
+modelName: "deepseek-ai/DeepSeek-R1-0528-Qwen3-8B"
+
+
+# --- 提供商配置 ---
+
+# aiProvider:
+#   描述: 指定使用哪个 AI 服务提供商。
+#   可选值: "openai", "gemini"
+#   注意: "openai" 适用于所有兼容 OpenAI API 格式的服务 (包括您自定义的 URL)。
+#   默认值: "openai"
+aiProvider: "openai"
+
+# searchProvider:
+#   描述: 指定使用哪个搜索引擎。
+#   可选值: "tavily", "google"
+#   注意: "google" 是通过爬虫实现的，可能不稳定；"tavily" 需要在 .env 文件中配置 TAVILY_API_KEY。
+#   默认值: "tavily"
+searchProvider: "tavily"
+
+
+# --- 流程控制配置 ---
+
+# maxIterations:
+#   描述: 在“反思与修正”阶段，允许进行的最大研究循环次数。
+#   作用: 防止因不断产生新问题而陷入无限循环。增加此值可以进行更深入的研究，但也会增加时间和成本。
+#   默认值: 3
+maxIterations: 3
+
+# maxResults:
+#   描述: 在使用搜索引擎 (如 Tavily) 时，每个子问题要获取的最大搜索结果数量。
+#   作用: 增加此值可以获得更全面的原始资料，但也会增加后续总结的负担和成本。
+#   默认值: 5
+maxResults: 5
+
+# maxFinalContextChars:
+#   描述: 在生成最终报告时，允许传递给 AI 的最大上下文长度（以字符为单位）。
+#   作用: 在不超出模型限制的前提下，尽可能多地为 AI 提供参考信息。
+#   注意: 1k token 约等于 4000 个英文字符。请根据您使用的模型的上下文窗口大小来调整此值。
+#   默认值: 50000
+maxFinalContextChars: 50000
+
+
+# --- 产出物配置 ---
+
+# generateKnowledgeGraph:
+#   描述: 是否在生成最终报告后，额外生成一份可视化的知识图谱 (Mermaid 格式)。
+#   作用: 将报告内容结构化、可视化，便于快速理解。
+#   默认值: true
+generateKnowledgeGraph: true
