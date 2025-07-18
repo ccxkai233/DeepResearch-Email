@@ -23,6 +23,7 @@
     "nodemailer": "^7.0.5",
     "p-limit": "^6.2.0",
     "pako": "^2.1.0",
+    "showdown": "^2.1.0",
     "zod": "^4.0.5",
     "zod-to-json-schema": "^3.24.6"
   },
@@ -32,6 +33,7 @@
     "@types/node-fetch": "^2.6.12",
     "@types/nodemailer": "^6.4.17",
     "@types/pako": "^2.0.3",
+    "@types/showdown": "^2.0.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }

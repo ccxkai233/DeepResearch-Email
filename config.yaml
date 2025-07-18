@@ -14,7 +14,7 @@
 # researchQuestion:
 #   描述: 需要研究的核心问题。这是整个任务的起点。
 #   示例: "What are the latest advancements in AI-powered code generation?"
-researchQuestion: "kilo code 最新的羊毛福利"
+researchQuestion: "最近在个人使用顶级AI产品，比如GPT、gemini、claude方面有哪些免费羊毛？"
 
 
 # --- 语言配置 ---
@@ -41,7 +41,7 @@ writingLanguage: "Chinese"
 #   注意: 请确保您使用的 API 密钥有权限访问此模型。
 #   示例: "gpt-4o", "gpt-4-turbo", "gpt-3.5-turbo"
 #   默认值: "gpt-4o"
-modelName: "deepseek-ai/DeepSeek-R1-0528-Qwen3-8B"
+modelName: "deepseek-ai/DeepSeek-V3"
 
 
 # --- 提供商配置 ---
@@ -82,11 +82,3 @@ maxResults: 5
 #   默认值: 50000
 maxFinalContextChars: 50000
 
-
-# --- 产出物配置 ---
-
-# generateKnowledgeGraph:
-#   描述: 是否在生成最终报告后，额外生成一份可视化的知识图谱 (Mermaid 格式)。
-#   作用: 将报告内容结构化、可视化，便于快速理解。
-#   默认值: true
-generateKnowledgeGraph: true

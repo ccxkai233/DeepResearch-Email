@@ -14,6 +14,7 @@ This is the user's suggestion for research direction:
 </SUGGESTION>
 
 Based on previous research and user research suggestions, determine whether further research is needed.
+**Critically review the existing learnings, considering their source reliability (Currency, Authority, Accuracy).**
 If further research is needed, list of follow-up SERP queries to research the topic further.
 Make sure each query is unique and not similar to each other.
 If you believe no further research is needed, you can output an empty queries.

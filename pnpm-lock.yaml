@@ -41,6 +41,9 @@ importers:
       pako:
         specifier: ^2.1.0
         version: 2.1.0
+      showdown:
+        specifier: ^2.1.0
+        version: 2.1.0
       zod:
         specifier: ^4.0.5
         version: 4.0.5
@@ -63,6 +66,9 @@ importers:
       '@types/pako':
         specifier: ^2.0.3
         version: 2.0.3
+      '@types/showdown':
+        specifier: ^2.0.6
+        version: 2.0.6
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@24.0.14)(typescript@5.8.3)
@@ -162,6 +168,9 @@ packages:
   '@types/pako@2.0.3':
     resolution: {integrity: sha512-bq0hMV9opAcrmE0Byyo0fY3Ew4tgOevJmQ9grUhpXQhYfyLJ1Kqg3P33JT5fdbT2AjeAjR51zqqVjAL/HMkx7Q==}
 
+  '@types/showdown@2.0.6':
+    resolution: {integrity: sha512-pTvD/0CIeqe4x23+YJWlX2gArHa8G0J0Oh6GKaVXV7TAeickpkkZiNOgFcFcmLQ5lB/K0qBJL1FtRYltBfbGCQ==}
+
   acorn-walk@8.3.4:
     resolution: {integrity: sha512-ueEepnujpqee2o5aIYnvHU6C0A42MNdsIDeqy5BydrkuC5R1ZuUFnm27EeFJGoEHJQgn3uleRvmTXaJgfXbt4g==}
     engines: {node: '>=0.4.0'}
@@ -201,6 +210,10 @@ packages:
   combined-stream@1.0.8:
     resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
     engines: {node: '>= 0.8'}
+
+  commander@9.5.0:
+    resolution: {integrity: sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==}
+    engines: {node: ^12.20.0 || >=14}
 
   create-require@1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
@@ -333,6 +346,10 @@ packages:
 
   secure-json-parse@2.7.0:
     resolution: {integrity: sha512-6aU+Rwsezw7VR8/nyvKTx8QpWH9FrcYiXXlqC4z5d5XQBDRqtbfsRjnwGyqbi3gddNtWHuEk9OANUotL26qKUw==}
+
+  showdown@2.1.0:
+    resolution: {integrity: sha512-/6NVYu4U819R2pUIk79n67SYgJHWCce0a5xTP979WbNp0FL9MN1I1QK662IDU1b6JzKTvmhgI7T7JYIxBi3kMQ==}
+    hasBin: true
 
   swr@2.3.4:
     resolution: {integrity: sha512-bYd2lrhc+VarcpkgWclcUi92wYCpOgMws9Sd1hG1ntAu0NEy+14CbotuFjshBU2kt9rYj9TSmDcybpxpeTU1fg==}
@@ -484,6 +501,8 @@ snapshots:
 
   '@types/pako@2.0.3': {}
 
+  '@types/showdown@2.0.6': {}
+
   acorn-walk@8.3.4:
     dependencies:
       acorn: 8.15.0
@@ -518,6 +537,8 @@ snapshots:
   combined-stream@1.0.8:
     dependencies:
       delayed-stream: 1.0.0
+
+  commander@9.5.0: {}
 
   create-require@1.1.1: {}
 
@@ -631,6 +652,10 @@ snapshots:
   react@19.1.0: {}
 
   secure-json-parse@2.7.0: {}
+
+  showdown@2.1.0:
+    dependencies:
+      commander: 9.5.0
 
   swr@2.3.4(react@19.1.0):
     dependencies:

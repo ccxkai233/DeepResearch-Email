@@ -13,7 +13,6 @@ import {
   reviewSerpQueriesPrompt,
   writeFinalReportPrompt,
   getSERPQuerySchema,
-  knowledgeGraphPrompt,
 } from "./prompts";
 import { ThinkTagStreamProcessor, removeJsonMarkdown } from "./text_utils";
 import { crawlPage } from "./crawler";
@@ -23,6 +22,7 @@ let taskState: any = {
   question: "",
   tasks: [],
   finalReport: "",
+  sources: [],
   // ... other state properties
 };
 
@@ -76,8 +76,13 @@ interface AppConfig {
   aiProvider: string;
   maxIterations: number;
   maxResults: number;
-  generateKnowledgeGraph: boolean;
   maxFinalContextChars: number;
+}
+
+interface Source {
+  url: string;
+  title?: string;
+  content?: string;
 }
 
 export async function runDeepResearch({
@@ -89,9 +94,8 @@ export async function runDeepResearch({
   aiProvider,
   maxIterations,
   maxResults,
-  generateKnowledgeGraph,
   maxFinalContextChars
-}: ResearchConfig & AppConfig): Promise<{ finalReport: string, knowledgeGraph: string }> {
+}: ResearchConfig & AppConfig): Promise<{ finalReport: string, sources: Source[] }> {
   taskState.question = initialQuestion;
   const model = await createModelProvider(aiProvider, modelName);
 
@@ -110,6 +114,7 @@ export async function runDeepResearch({
   console.log("\n3. Starting Dynamic Research Loop...");
   const searchLimit = Plimit(2);
   let allSummaries: string[] = [];
+  let allSources: Source[] = [];
   let rollingSummary = ""; // New variable for rolling summary
   let completedTasks = 0;
   let currentIteration = 0;
@@ -129,6 +134,7 @@ export async function runDeepResearch({
         console.log(`     - Summarizing results for "${task.query}"`);
         const summary = await summarizeSearchResults(model, task.query, searchResults.sources);
         console.log(`     - Summary generated.`);
+        allSources.push(...searchResults.sources);
         return summary;
       })
     );
@@ -157,12 +163,13 @@ export async function runDeepResearch({
   console.log("\n4. Generating Final Report...");
   console.log(`   - Final context size for report generation: ${allSummaries.join('\n').length} characters.`);
 
+  const contextForReport = allSummaries.join('\n').slice(-maxFinalContextChars);
   const reportResult = await streamText({
     model: model,
     system: getSystemPrompt(),
     prompt: writeFinalReportPrompt(
       reportPlan,
-      allSummaries, // Pass the raw summaries
+      [contextForReport],
       [], // Sources are now part of the context
       [], // images - not implemented yet
       `The user wants a comprehensive report based on the research summaries.`,
@@ -178,7 +185,11 @@ export async function runDeepResearch({
   }
 
   taskState.finalReport = finalReport;
-  return taskState.finalReport;
+
+  const uniqueSources = Array.from(new Map(allSources.map(source => [source.url, source])).values());
+  taskState.sources = uniqueSources;
+
+  return { finalReport, sources: uniqueSources };
 }
 
 async function summarizeSearchResults(model: any, query: string, sources: any[]): Promise<string> {
@@ -245,7 +256,7 @@ async function generateInitialQuestions(model: any, initialQuestion: string, res
     }
 
     // If JSON parsing fails or returns an empty array, try splitting by newlines
-    let questionsFromNewlines = content.split('\n').filter(q => q.trim() !== '' && !q.startsWith("```")).map(q => {
+    let questionsFromNewlines = content.replace(/```(json)?/g, '').split('\n').filter(q => q.trim() !== '').map(q => {
         // Clean the question text itself
         const cleanedQuestion = q.replace(/^- /, '').replace(/"question":\s*"/, '').replace(/"$/, '').trim();
         return { question: cleanedQuestion };
@@ -285,22 +296,6 @@ async function generateReportPlan(model: any, initialQuestion: string, questions
   }
   return plan;
 }
-
-async function generateKnowledgeGraph(model: any, report: string): Promise<string> {
-  const result = await streamText({
-    model: model,
-    prompt: knowledgeGraphPrompt.replace("{report}", report),
-  });
-
-  let graph = "";
-  for await (const delta of result.textStream) {
-    graph += delta;
-  }
-  // Clean the output to ensure it's valid Mermaid code
-  const cleanedGraph = graph.replace(/```mermaid\n/, '').replace(/```/, '').trim();
-  return cleanedGraph;
-}
-
 
 async function reviewAndGenerateNextTasks(model: any, plan: string, summaries: string[]): Promise<any[]> {
   const result = await streamText({

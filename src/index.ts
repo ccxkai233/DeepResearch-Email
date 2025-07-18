@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import yaml from 'js-yaml';
 import fs from 'fs';
 import path from 'path';
+import showdown from 'showdown';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -20,7 +21,6 @@ interface AppConfig {
   searchProvider: string;
   maxIterations: number;
   maxResults: number;
-  generateKnowledgeGraph: boolean;
   maxFinalContextChars: number;
 }
 
@@ -45,7 +45,7 @@ async function main() {
     return;
   }
 
-  const { researchQuestion, researchLanguage, writingLanguage, modelName, aiProvider, searchProvider, maxIterations, maxResults, generateKnowledgeGraph, maxFinalContextChars } = config;
+  const { researchQuestion, researchLanguage, writingLanguage, modelName, aiProvider, searchProvider, maxIterations, maxResults, maxFinalContextChars } = config;
   const recipientEmail = process.env.EMAIL_TO;
 
   console.log(`🚀 开始深度研究，问题: "${researchQuestion}"`);
@@ -54,10 +54,9 @@ async function main() {
   console.log(`   - 研究语言: ${researchLanguage}, 报告语言: ${writingLanguage}`);
   console.log(`   - 最大研究迭代次数: ${maxIterations}`);
   console.log(`   - 最大最终上下文长度: ${maxFinalContextChars} 字符`);
-  console.log(`   - 是否生成知识图谱: ${generateKnowledgeGraph}`);
 
   try {
-    const { finalReport, knowledgeGraph } = await runDeepResearch({
+    const { finalReport, sources } = await runDeepResearch({
       initialQuestion: researchQuestion,
       researchLanguage,
       writingLanguage,
@@ -66,33 +65,25 @@ async function main() {
       searchProvider,
       maxIterations,
       maxResults,
-      generateKnowledgeGraph,
       maxFinalContextChars,
     });
 
     console.log("\n✅ 研究完成！正在发送邮件...");
     
-    const reportContent = finalReport || "AI 未能生成有效的报告内容。";
-    let emailHtml = `<p>${reportContent.replace(/\n/g, '<br>')}</p>`;
-
-    if (knowledgeGraph) {
-      const compressed = pako.deflate(new TextEncoder().encode(knowledgeGraph));
-      const encoded = Buffer.from(compressed).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-      const mermaidUrl = `https://mermaid.live/edit#pako:${encoded}`;
-      emailHtml += `
-        <hr>
-        <h2>知识图谱 (Mermaid 格式)</h2>
-        <pre><code>${knowledgeGraph}</code></pre>
-        <p>
-          <a href="${mermaidUrl}" target="_blank">点击这里查看并编辑知识图谱</a>
-        </p>
-      `;
+    let reportContent = finalReport || "AI 未能生成有效的报告内容。";
+    
+    if (sources && sources.length > 0) {
+      const references = sources.map((source, idx) => `[${idx + 1}]: ${source.url} "${source.title || ''}"`).join('\n');
+      reportContent += `\n\n---\n\n**参考文献**\n${references}`;
     }
+
+    const converter = new showdown.Converter();
+    let emailHtml = converter.makeHtml(reportContent);
 
     await sendEmail({
       to: recipientEmail,
       subject: `深度研究报告: ${researchQuestion}`,
-      text: reportContent + (knowledgeGraph ? `\n\n--- 知识图谱 ---\n${knowledgeGraph}` : ''),
+      text: reportContent,
       html: emailHtml,
     });
 
